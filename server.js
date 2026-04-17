@@ -1,3 +1,5 @@
+require("./db");
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -6,7 +8,9 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5000",
+    origin: "https://nodevaultuserauthapp.netlify.app",
+    //origin: true,
+    //origin: "http://localhost:5000",
     credentials: true,
   }),
 );
@@ -26,3 +30,8 @@ app.use("/api/admin", adminRoutes);
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
+
+console.log("ENV CHECK:");
+console.log("HOST:", process.env.DB_HOST);
+console.log("USER:", process.env.DB_USER);
+console.log("PORT:", process.env.DB_PORT);
