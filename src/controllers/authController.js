@@ -91,14 +91,18 @@ async function login(req, res) {
       if (user.role === "admin") {
         res.cookie("adminToken", token, {
           httpOnly: true,
-          secure: false,
-          sameSite: "lax",
+          secure: true,
+          //secure: false,
+          sameSite: "None",
+          //sameSite: "lax",
         });
       } else {
         res.cookie("token", token, {
           httpOnly: true,
-          secure: false,
-          sameSite: "lax",
+          secure: true,
+          //secure: false,
+          sameSite: "None",
+          //sameSite: "lax",
         });
       }
 
