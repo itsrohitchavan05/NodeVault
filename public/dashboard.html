@@ -1,86 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - NodeVault</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
-  <div id="page-loader"><div class="loader-spinner"></div></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - NodeVault</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
 
-  <nav>
-    <a href="/" class="nav-brand">NodeVault</a>
-    <div class="nav-links">
-      <span id="user-name" style="color:var(--neutral-500);font-size:0.85rem;"></span>
-      <button onclick="logout()" class="btn btn-secondary" style="padding:0.4rem 0.875rem;font-size:0.85rem;">Logout</button>
+  <body>
+    <div id="page-loader">
+      <div class="loader-spinner"></div>
     </div>
-  </nav>
 
-  <div class="container-wide" id="main-content" style="display:none;">
-    <div class="dashboard-header">
-      <div>
-        <h1>My Dashboard</h1>
-        <p id="user-greeting">Manage your personal entries.</p>
+    <nav>
+      <a href="/" class="nav-brand">NodeVault</a>
+      <div class="nav-links">
+        <span
+          id="user-name"
+          style="color: var(--neutral-500); font-size: 0.85rem"
+        ></span>
+        <button
+          onclick="logout()"
+          class="btn btn-secondary"
+          style="padding: 0.4rem 0.875rem; font-size: 0.85rem"
+        >
+          Logout
+        </button>
       </div>
-      <span class="user-badge" id="user-badge"></span>
-    </div>
+    </nav>
 
-    <div class="alert alert-error" id="alert-error"></div>
-    <div class="alert alert-success" id="alert-success"></div>
-
-    <div class="add-entry-form">
-      <h2>Add New Entry</h2>
-      <form id="add-form">
-        <div class="add-entry-row">
-          <div class="form-group">
-            <textarea id="content" placeholder="Write your entry here..." rows="2" maxlength="1000"></textarea>
-          </div>
-          <button type="submit" class="btn btn-add" id="add-btn">Add Entry</button>
+    <div class="container-wide" id="main-content" style="display: none">
+      <div class="dashboard-header">
+        <div>
+          <h1>My Dashboard</h1>
+          <p id="user-greeting">Manage your personal entries.</p>
         </div>
-      </form>
-    </div>
+        <span class="user-badge" id="user-badge"></span>
+      </div>
 
-    <div class="entries-header">
-      <h2>Your Entries</h2>
-      <span class="entries-count" id="entries-count">0</span>
-    </div>
+      <div class="alert alert-error" id="alert-error"></div>
+      <div class="alert alert-success" id="alert-success"></div>
 
-    <div id="entries-list" class="entries-list">
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <p>No entries yet. Add one above!</p>
+      <div class="add-entry-form">
+        <h2>Add New Entry</h2>
+        <form id="add-form">
+          <div class="add-entry-row">
+            <div class="form-group">
+              <textarea
+                id="content"
+                placeholder="Write your entry here..."
+                rows="2"
+                maxlength="1000"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-add" id="add-btn">
+              Add Entry
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="entries-header">
+        <h2>Your Entries</h2>
+        <span class="entries-count" id="entries-count">0</span>
+      </div>
+
+      <div id="entries-list" class="entries-list">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>No entries yet. Add one above!</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    let currentUser = null;
+    <script>
+      let currentUser = null;
 
-    function formatDate(iso) {
-      return new Date(iso).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
-    }
-
-    function showAlert(type, msg) {
-      const el = document.getElementById(`alert-${type}`);
-      el.textContent = msg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 3000);
-    }
-
-    function renderEntries(entries) {
-      const list = document.getElementById('entries-list');
-      document.getElementById('entries-count').textContent = entries.length;
-
-      if (!entries.length) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No entries yet. Add one above!</p></div>`;
-        return;
+      function formatDate(iso) {
+        return new Date(iso).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       }
 
-      list.innerHTML = entries.map(entry => `
+      function showAlert(type, msg) {
+        const el = document.getElementById(`alert-${type}`);
+        el.textContent = msg;
+        el.classList.add("show");
+        setTimeout(() => el.classList.remove("show"), 3000);
+      }
+
+      function renderEntries(entries) {
+        const list = document.getElementById("entries-list");
+        document.getElementById("entries-count").textContent = entries.length;
+
+        if (!entries.length) {
+          list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No entries yet. Add one above!</p></div>`;
+          return;
+        }
+
+        list.innerHTML = entries
+          .map(
+            (entry) => `
         <div class="entry-item" id="entry-${entry.id}">
           <div class="entry-content">
             <div class="entry-text">${escapeHtml(entry.content)}</div>
@@ -88,118 +112,141 @@
           </div>
           <button class="btn btn-danger" onclick="deleteEntry('${entry.id}')">Delete</button>
         </div>
-      `).join('');
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-    }
-
-    /*async function loadEntries() {
-      try {
-        const res = await fetch('/api/data', { credentials: 'include' });
-        if (res.status === 401 || res.status === 403) {
-          window.location.href = '/login.html';
-          return;
-        }
-        const { data } = await res.json();
-        renderEntries(data || []);
-      } catch {
-        showAlert('error', 'Failed to load entries.');
+      `,
+          )
+          .join("");
       }
-    }*/
 
-    async function deleteEntry(id) {
-      if (!confirm('Are you sure you want to delete this entry?')) return;
-
-      try {
-        const res = await fetch(`/api/data/${id}`, { method: 'DELETE', credentials: 'include' });
-        const data = await res.json();
-        if (!res.ok) { showAlert('error', data.error || 'Failed to delete.'); return; }
-        document.getElementById(`entry-${id}`)?.remove();
-        const count = document.getElementById('entries-count');
-        const newCount = parseInt(count.textContent) - 1;
-        count.textContent = newCount;
-        if (newCount === 0) {
-          document.getElementById('entries-list').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No entries yet. Add one above!</p></div>`;
-        }
-        showAlert('success', 'Entry deleted.');
-      } catch {
-        showAlert('error', 'Failed to delete entry.');
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
       }
-    }
 
-    document.getElementById('add-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const content = document.getElementById('content').value.trim();
-      if (!content) { showAlert('error', 'Content cannot be empty.'); return; }
+      async function loadEntries() {
+        try {
+          const res = await fetch("/api/data", { credentials: "include" });
+          if (res.status === 401 || res.status === 403) {
+            window.location.href = "/login.html";
+            return;
+          }
+          const { data } = await res.json();
+          renderEntries(data || []);
+        } catch {
+          showAlert("error", "Failed to load entries.");
+        }
+      }
 
-      const addBtn = document.getElementById('add-btn');
-      addBtn.disabled = true;
-      addBtn.innerHTML = '<span class="spinner"></span>';
+      async function deleteEntry(id) {
+        if (!confirm("Are you sure you want to delete this entry?")) return;
 
-      try {
-        const res = await fetch('/api/data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ content })
+        try {
+          const res = await fetch(`/api/data/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (res.status === 401) {
+            alert("Your account has been removed.");
+            window.location.href = "/login.html";
+            return;
+          }
+          const data = await res.json();
+          if (!res.ok) {
+            showAlert("error", data.error || "Failed to delete.");
+            return;
+          }
+          document.getElementById(`entry-${id}`)?.remove();
+          const count = document.getElementById("entries-count");
+          const newCount = parseInt(count.textContent) - 1;
+          count.textContent = newCount;
+          if (newCount === 0) {
+            document.getElementById("entries-list").innerHTML =
+              `<div class="empty-state"><div class="empty-icon">📭</div><p>No entries yet. Add one above!</p></div>`;
+          }
+          showAlert("success", "Entry deleted.");
+        } catch {
+          showAlert("error", "Failed to delete entry.");
+        }
+      }
+
+      document
+        .getElementById("add-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const content = document.getElementById("content").value.trim();
+          if (!content) {
+            showAlert("error", "Content cannot be empty.");
+            return;
+          }
+
+          const addBtn = document.getElementById("add-btn");
+          addBtn.disabled = true;
+          addBtn.innerHTML = '<span class="spinner"></span>';
+
+          try {
+            const res = await fetch("/api/data", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ content }),
+            });
+
+            const result = await res.json();
+            if (!res.ok) {
+              const msg = result.errors
+                ? result.errors.map((e) => e.msg).join(", ")
+                : result.error;
+              showAlert("error", msg || "Failed to add entry.");
+              return;
+            }
+
+            document.getElementById("content").value = "";
+            showAlert("success", "Entry added!");
+            await loadEntries();
+          } catch {
+            showAlert("error", "Failed to add entry.");
+          } finally {
+            addBtn.disabled = false;
+            addBtn.textContent = "Add Entry";
+          }
         });
 
-        const result = await res.json();
-        if (!res.ok) {
-          const msg = result.errors ? result.errors.map(e => e.msg).join(', ') : result.error;
-          showAlert('error', msg || 'Failed to add entry.'); return;
+      async function logout() {
+        await fetch("/api/logout", { method: "POST", credentials: "include" });
+        window.location.href = "/";
+      }
+
+      async function init() {
+        try {
+          const res = await fetch("/api/me", { credentials: "include" });
+
+          if (!res.ok) {
+            window.location.href = "/login.html";
+            return;
+          }
+
+          const { user } = await res.json();
+          currentUser = user;
+
+          document.getElementById("user-name").textContent = user.name;
+          document.getElementById("user-greeting").textContent =
+            `Welcome back, ${user.name}!`;
+          document.getElementById("user-badge").textContent = user.email;
+        } catch {
+          window.location.href = "/login.html";
+          return;
         }
 
-        document.getElementById('content').value = '';
-        showAlert('success', 'Entry added!');
+        document.getElementById("page-loader").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+
         await loadEntries();
-      } catch {
-        showAlert('error', 'Failed to add entry.');
-      } finally {
-        addBtn.disabled = false;
-        addBtn.textContent = 'Add Entry';
-      }
-    });
-
-    async function logout() {
-      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-      window.location.href = '/';
-    }
-
-    /*async function init() {
-      try {
-        const res = await fetch('/api/me', { credentials: 'include' });
-        if (!res.ok) { window.location.href = '/login/html'; return; }
-
-        const { user } = await res.json();
-        currentUser = user;
-
-        document.getElementById('user-name').textContent = user.name;
-        document.getElementById('user-greeting').textContent = `Welcome back, ${user.name}!`;
-        document.getElementById('user-badge').textContent = user.email;
-      } catch {
-        window.location.href = '/login.html';
-        return;
       }
 
-      document.getElementById('page-loader').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      await loadEntries();
-    }*/
-    async function init() {
-	  const user = { name: "Rohit", email: "demo@gmail.com" };
-
-	  document.getElementById('user-name').textContent = user.name;
-	  document.getElementById('user-greeting').textContent = `Welcome back, ${user.name}!`;
-	  document.getElementById('user-badge').textContent = user.email;
-
-	  document.getElementById('page-loader').style.display = 'none';
-	  document.getElementById('main-content').style.display = 'block';
-   }
-
-    init();
-  </script>
-</body>
+      init();
+    </script>
+  </body>
 </html>

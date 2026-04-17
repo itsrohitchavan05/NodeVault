@@ -1,71 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NodeVault - Secure Data Management</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
-  <nav>
-    <a href="/" class="nav-brand">NodeVault</a>
-    <div class="nav-links" id="nav-links">
-      <a href="/login.html">Login</a>
-      <a href="/signup.html" class="btn-nav-primary">Get Started</a>
-    </div>
-  </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NodeVault - User Authentication & Secure Data Management</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">NodeVault</a>
+      <div class="nav-links" id="nav-links">
+        <a href="/login.html">Login</a>
+        <a href="/signup.html" class="btn-nav-primary">Get Started</a>
+      </div>
+    </nav>
 
-  <section class="hero">
-    <h1>Secure data storage,<br>built for you</h1>
-    <p>NodeVault lets you store, manage and access your personal notes and entries — protected by industry-standard authentication.</p>
-    <div class="hero-actions">
-      <a href="/signup.html" class="btn btn-primary" style="width:auto;padding:0.75rem 2rem;">Create Free Account</a>
-      <a href="/login.html" class="btn btn-secondary">Sign In</a>
-    </div>
-  </section>
+    <section class="hero">
+      <h1>Secure data storage,<br />built for you</h1>
+      <p>
+        NodeVault lets you store, manage and access your personal entries
+        (notes) — protected by industry-standard authentication.
+      </p>
+      <div class="hero-actions">
+        <a
+          href="/signup.html"
+          class="btn btn-primary"
+          style="width: auto; padding: 0.75rem 2rem"
+          >Create Free Account</a
+        >
+        <a href="/login.html" class="btn btn-secondary">Sign In</a>
+      </div>
+    </section>
 
-  <section class="features">
-    <div class="feature-card">
-      <div class="feature-icon">🔐</div>
-      <h3>Secure Authentication</h3>
-      <p>Passwords are hashed with bcrypt and sessions protected by signed JWT tokens.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📝</div>
-      <h3>Personal Dashboard</h3>
-      <p>Add, view, and delete your own entries. Your data is visible only to you.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <h3>Fast REST API</h3>
-      <p>Built on Express.js with proper validation, error handling, and clean architecture.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🛡️</div>
-      <h3>SQL Injection Safe</h3>
-      <p>All queries use parameterized statements via the Supabase query builder.</p>
-    </div>
-  </section>
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Secure Authentication</h3>
+        <p>
+          Passwords are hashed with bcrypt and sessions protected by signed JWT
+          tokens.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Personal Dashboard</h3>
+        <p>Add, view, and delete your own entries.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast REST API</h3>
+        <p>
+          Built on Express.js with proper validation, error handling, and clean
+          architecture.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>SQL Injection Safe</h3>
+        <p>All queries use parameterized statements via the MySQL.</p>
+      </div>
+    </section>
 
-  <footer>
-    <p>NodeVault &mdash; Full-Stack Auth Demo &copy; 2025</p>
-  </footer>
+    <footer>
+      <p>NodeVault &mdash; Full-Stack Auth &copy; 2026</p>
+    </footer>
 
-  <script>
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/me', { credentials: 'include' });
-        if (res.ok) {
-          const { user } = await res.json();
-          const nav = document.getElementById('nav-links');
-          nav.innerHTML = `
+    <script>
+      async function checkAuth() {
+        try {
+          const res = await fetch("/api/me", { credentials: "include" });
+          if (res.ok) {
+            const { user } = await res.json();
+            const nav = document.getElementById("nav-links");
+            nav.innerHTML = `
             <span style="color:var(--neutral-500);font-size:0.85rem;">Hi, ${user.name}</span>
             <a href="/dashboard.html" class="btn-nav-primary">Dashboard</a>
           `;
-        }
-      } catch {}
-    }
-    checkAuth();
-  </script>
-</body>
+          }
+        } catch {}
+      }
+      checkAuth();
+    </script>
+  </body>
 </html>

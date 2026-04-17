@@ -1,75 +1,45 @@
-const { validationResult } = require('express-validator');
-const supabase = require('../db/supabase');
+const db = require("../db/mysql");
 
-async function getAllData(req, res) {
-  try {
-    const { data, error } = await supabase
-      .from('user_data')
-      .select('id, content, created_at')
-      .eq('user_id', req.user.id)
-      .order('created_at', { ascending: false });
+// Get all entries
+exports.getAllData = (req, res) => {
+  const query =
+    "SELECT * FROM user_data WHERE user_id = ? ORDER BY created_at DESC";
 
-    if (error) throw error;
+  db.query(query, [req.user.id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ data: results });
+  });
+};
 
-    return res.json({ data });
-  } catch (err) {
-    console.error('Get data error:', err);
-    return res.status(500).json({ error: 'Failed to retrieve data.' });
-  }
-}
-
-async function createData(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+// Create new entry
+exports.createData = (req, res) => {
   const { content } = req.body;
 
-  try {
-    const { data, error } = await supabase
-      .from('user_data')
-      .insert({ user_id: req.user.id, content })
-      .select('id, content, created_at')
-      .single();
+  const query = "INSERT INTO user_data (user_id, content) VALUES (?, ?)";
 
-    if (error) throw error;
+  db.query(query, [req.user.id, content], (err, result) => {
+    if (err) return res.status(500).json({ error: err });
 
-    return res.status(201).json({ message: 'Entry created.', data });
-  } catch (err) {
-    console.error('Create data error:', err);
-    return res.status(500).json({ error: 'Failed to create entry.' });
-  }
-}
+    res.status(201).json({
+      message: "Entry created",
+      data: {
+        id: result.insertId,
+        content,
+        created_at: new Date(),
+      },
+    });
+  });
+};
 
-async function deleteData(req, res) {
+// Delete entry
+exports.deleteData = (req, res) => {
   const { id } = req.params;
 
-  try {
-    const { data: existing, error: fetchError } = await supabase
-      .from('user_data')
-      .select('id, user_id')
-      .eq('id', id)
-      .maybeSingle();
+  const query = "DELETE FROM user_data WHERE id = ? AND user_id = ?";
 
-    if (fetchError) throw fetchError;
+  db.query(query, [id, req.user.id], (err) => {
+    if (err) return res.status(500).json({ error: err });
 
-    if (!existing) {
-      return res.status(404).json({ error: 'Entry not found.' });
-    }
-
-    if (existing.user_id !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized to delete this entry.' });
-    }
-
-    const { error } = await supabase.from('user_data').delete().eq('id', id);
-    if (error) throw error;
-
-    return res.json({ message: 'Entry deleted successfully.' });
-  } catch (err) {
-    console.error('Delete data error:', err);
-    return res.status(500).json({ error: 'Failed to delete entry.' });
-  }
-}
-
-module.exports = { getAllData, createData, deleteData };
+    res.json({ message: "Entry deleted" });
+  });
+};
