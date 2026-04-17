@@ -59,6 +59,7 @@
       const form = document.getElementById("admin-login-form");
       const errorEl = document.getElementById("alert-error");
       const submitBtn = document.getElementById("submit-btn");
+      const BASE_URL = "https://nodevault-backend-k0jb.onrender.com/";
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -72,7 +73,7 @@
         submitBtn.innerHTML = '<span class="spinner"></span> Authenticating...';
 
         try {
-          const res = await fetch("/api/login", {
+          const res = await fetch('${BASE_URL}/api/login', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
