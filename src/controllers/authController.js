@@ -1,57 +1,55 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
-const mysql = require('../db/mysql');
-const { JWT_SECRET } = require('../middleware/auth');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
+
+const db = require("../db/mysql");
+
+const JWT_SECRET = "secretkey";
 
 async function signup(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { name, email, password } = req.body;
 
   try {
-    // Check if user exists
-    const checkQuery = "SELECT id FROM users WHERE email = ?";
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    mysql.query(checkQuery, [email], async (err, results) => {
-      if (err) return res.status(500).json({ error: err });
+    const query =
+      "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'user')";
 
-      if (results.length > 0) {
-        return res.status(409).json({ error: "Email already registered." });
+    db.query(query, [name, email, hashedPassword], (err, result) => {
+      if (err) {
+        console.error("Signup DB error:", err);
+
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({
+            error: "Email already registered",
+          });
+        }
+
+        return res.status(500).json({
+          error: "Server error during signup",
+        });
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 12);
+      const userId = result.insertId;
 
-      // Insert user
-      const insertQuery = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+      const token = jwt.sign(
+        { id: userId, name, email, role: "user" },
+        JWT_SECRET,
+        { expiresIn: "7d" },
+      );
 
-      mysql.query(insertQuery, [name, email, hashedPassword], (err, result) => {
-        if (err) return res.status(500).json({ error: err });
+      res.cookie("token", token, {
+        httpOnly: true,
+      });
 
-        const token = jwt.sign(
-          { id: result.insertId, name, email },
-          JWT_SECRET,
-          { expiresIn: "7d" }
-        );
-
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: false,
-        });
-
-        return res.status(201).json({
-          message: "Account created successfully",
-          user: { id: result.insertId, name, email },
-        });
+      return res.status(201).json({
+        message: "Account created successfully",
+        user: { id: userId, name, email, role: "user" },
       });
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Server error during signup." });
+    console.error("Signup error:", err);
+    return res.status(500).json({ error: "Signup failed" });
   }
 }
 
@@ -66,8 +64,11 @@ async function login(req, res) {
   try {
     const query = "SELECT * FROM users WHERE email = ?";
 
-    mysql.query(query, [email], async (err, results) => {
-      if (err) return res.status(500).json({ error: err });
+    db.query(query, [email], async (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
 
       if (results.length === 0) {
         return res.status(401).json({ error: "Invalid email or password." });
@@ -82,19 +83,33 @@ async function login(req, res) {
       }
 
       const token = jwt.sign(
-        { id: user.id, name: user.name, email: user.email },
+        { id: user.id, name: user.name, email: user.email, role: user.role },
         JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "7d" },
       );
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-      });
+      if (user.role === "admin") {
+        res.cookie("adminToken", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+        });
+      } else {
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+        });
+      }
 
       return res.json({
         message: "Login successful",
-        user: { id: user.id, name: user.name, email: user.email },
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       });
     });
   } catch (err) {
@@ -104,12 +119,25 @@ async function login(req, res) {
 }
 
 function logout(req, res) {
-  res.clearCookie('token');
-  return res.json({ message: 'Logged out successfully.' });
+  res.clearCookie("token");
+  res.clearCookie("adminToken");
+
+  return res.json({ message: "Logged out successfully" });
 }
 
 function me(req, res) {
-  return res.json({ user: req.user });
+  const token = req.cookies.token || req.cookies.adminToken;
+
+  if (!token) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return res.json({ user: decoded });
+  } catch {
+    return res.status(403).json({ error: "Invalid token" });
+  }
 }
 
 module.exports = { signup, login, logout, me };

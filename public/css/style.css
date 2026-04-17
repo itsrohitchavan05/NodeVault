@@ -35,7 +35,6 @@ body {
   min-height: 100vh;
 }
 
-/* Navigation */
 nav {
   background: #fff;
   border-bottom: 1px solid var(--neutral-200);
@@ -83,7 +82,6 @@ nav {
 
 .btn-nav-primary:hover { background: var(--primary-dark) !important; }
 
-/* Main containers */
 .container {
   max-width: 480px;
   margin: 0 auto;
@@ -96,7 +94,6 @@ nav {
   padding: 2rem 1.5rem;
 }
 
-/* Cards */
 .card {
   background: #fff;
   border: 1px solid var(--neutral-200);
@@ -105,7 +102,6 @@ nav {
   box-shadow: var(--shadow);
 }
 
-/* Hero section */
 .hero {
   text-align: center;
   padding: 5rem 1.5rem 4rem;
@@ -177,7 +173,6 @@ nav {
 
 .feature-card p { font-size: 0.875rem; color: var(--neutral-500); line-height: 1.6; }
 
-/* Form styles */
 .form-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -227,7 +222,6 @@ input:focus, textarea:focus {
 
 textarea { resize: vertical; min-height: 80px; }
 
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -285,7 +279,6 @@ textarea { resize: vertical; min-height: 80px; }
 
 .btn-add:hover { background: var(--primary-dark); }
 
-/* Alerts */
 .alert {
   padding: 0.875rem 1rem;
   border-radius: var(--radius);
@@ -299,7 +292,6 @@ textarea { resize: vertical; min-height: 80px; }
 .alert-error { background: var(--error-light); color: #991b1b; border: 1px solid #fca5a5; }
 .alert-success { background: var(--success-light); color: #15803d; border: 1px solid #86efac; }
 
-/* Form footer */
 .form-footer {
   text-align: center;
   margin-top: 1.5rem;
@@ -310,7 +302,6 @@ textarea { resize: vertical; min-height: 80px; }
 .form-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
 .form-footer a:hover { text-decoration: underline; }
 
-/* Dashboard */
 .dashboard-header {
   display: flex;
   align-items: center;
@@ -340,7 +331,6 @@ textarea { resize: vertical; min-height: 80px; }
   font-weight: 600;
 }
 
-/* Add entry form */
 .add-entry-form {
   background: #fff;
   border: 1px solid var(--neutral-200);
@@ -365,7 +355,6 @@ textarea { resize: vertical; min-height: 80px; }
 
 .add-entry-row .form-group { flex: 1; margin-bottom: 0; }
 
-/* Entries list */
 .entries-header {
   display: flex;
   align-items: center;
@@ -438,7 +427,6 @@ textarea { resize: vertical; min-height: 80px; }
 .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
 .empty-state p { font-size: 0.9rem; }
 
-/* Loading spinner */
 .spinner {
   width: 18px;
   height: 18px;
@@ -451,7 +439,6 @@ textarea { resize: vertical; min-height: 80px; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Page loading */
 #page-loader {
   position: fixed;
   inset: 0;
@@ -471,7 +458,6 @@ textarea { resize: vertical; min-height: 80px; }
   animation: spin 0.7s linear infinite;
 }
 
-/* Footer */
 footer {
   border-top: 1px solid var(--neutral-200);
   padding: 2rem;
@@ -481,7 +467,6 @@ footer {
   margin-top: 4rem;
 }
 
-/* Responsive */
 @media (max-width: 640px) {
   nav { padding: 0 1rem; }
   .hero h1 { font-size: 2rem; }

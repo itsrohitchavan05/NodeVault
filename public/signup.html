@@ -1,109 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign Up - NodeVault</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
-  <nav>
-    <a href="/" class="nav-brand">NodeVault</a>
-    <div class="nav-links">
-      <a href="/login.html">Sign In</a>
-    </div>
-  </nav>
-
-  <div class="container" style="padding-top:3rem;">
-    <div class="card">
-      <div class="form-header">
-        <h1>Create your account</h1>
-        <p>Join NodeVault to start managing your data securely.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - NodeVault</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="/" class="nav-brand">NodeVault</a>
+      <div class="nav-links">
+        <a href="/login.html">Sign In</a>
       </div>
+    </nav>
 
-      <div class="alert alert-error" id="alert-error"></div>
-      <div class="alert alert-success" id="alert-success"></div>
+    <div class="container" style="padding-top: 3rem">
+      <div class="card">
+        <div class="form-header">
+          <h1>Create your account</h1>
+          <p>Join NodeVault to start managing your data securely.</p>
+        </div>
 
-      <form id="signup-form">
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Jane Doe" required autocomplete="name" />
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="At least 6 characters" required autocomplete="new-password" />
-        </div>
-        <button type="submit" class="btn btn-primary" id="submit-btn">Create Account</button>
-      </form>
+        <div class="alert alert-error" id="alert-error"></div>
+        <div class="alert alert-success" id="alert-success"></div>
 
-      <div class="form-footer">
-        Already have an account? <a href="/login.html">Sign in</a>
+        <form id="signup-form">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Jane Doe"
+              required
+              autocomplete="name"
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="jane@example.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="At least 6 characters"
+              required
+              autocomplete="new-password"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            Create Account
+          </button>
+        </form>
+
+        <div class="form-footer">
+          Already have an account? <a href="/login.html">Sign in</a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    const form = document.getElementById('signup-form');
-    const errorEl = document.getElementById('alert-error');
-    const successEl = document.getElementById('alert-success');
-    const submitBtn = document.getElementById('submit-btn');
+    <script>
+      const form = document.getElementById("signup-form");
+      const errorEl = document.getElementById("alert-error");
+      const successEl = document.getElementById("alert-success");
+      const submitBtn = document.getElementById("submit-btn");
 
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.classList.add('show');
-      successEl.classList.remove('show');
-    }
-
-    function showSuccess(msg) {
-      successEl.textContent = msg;
-      successEl.classList.add('show');
-      errorEl.classList.remove('show');
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.classList.remove('show');
-      successEl.classList.remove('show');
-
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      if (password.length < 6) {
-        return showError('Password must be at least 6 characters.');
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.add("show");
+        successEl.classList.remove("show");
       }
 
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner"></span> Creating account...';
+      function showSuccess(msg) {
+        successEl.textContent = msg;
+        successEl.classList.add("show");
+        errorEl.classList.remove("show");
+      }
 
-      try {
-        const res = await fetch('/api/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ name, email, password })
-        });
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorEl.classList.remove("show");
+        successEl.classList.remove("show");
 
-        const data = await res.json();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
 
-        if (!res.ok) {
-          const msg = data.errors ? data.errors.map(e => e.msg).join(', ') : data.error;
-          return showError(msg || 'Signup failed.');
+        if (password.length < 6) {
+          return showError("Password must be at least 6 characters.");
         }
 
-        showSuccess('Account created! Redirecting to dashboard...');
-        setTimeout(() => { window.location.href = '/dashboard.html'; }, 1000);
-      } catch {
-        showError('Network error. Please try again.');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Create Account';
-      }
-    });
-  </script>
-</body>
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner"></span> Creating account...';
+
+        try {
+          const res = await fetch("/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ name, email, password }),
+          });
+
+          const text = await res.text();
+
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch {
+            throw new Error("Invalid JSON response");
+          }
+
+          if (!res.ok) {
+            return showError(data.error || "Signup failed");
+          }
+
+          showSuccess("Account created!");
+        } catch (err) {
+          console.log(err);
+          showError("Something went wrong");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Create Account";
+        }
+      });
+    </script>
+  </body>
 </html>
