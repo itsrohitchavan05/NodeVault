@@ -106,7 +106,7 @@
           '<span class="spinner"></span> Creating account...';
 
         try {
-          const res = await fetch('{BASE_URL}/api/signup', {
+          const res = await fetch(`{BASE_URL}/api/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
