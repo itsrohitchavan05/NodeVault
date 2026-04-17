@@ -62,6 +62,7 @@ A full-stack web application built using **Node.js, Express, MySQL, HTML, CSS, a
 
 ## 📁 Project Structure
 
+```
 project/
 │
 ├── public/
@@ -82,8 +83,7 @@ project/
 ├── server.js
 ├── package.json
 └── .env
-
----
+```
 
 ## ⚙️ Installation & Setup
 
