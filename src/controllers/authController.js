@@ -40,12 +40,15 @@ async function signup(req, res) {
 
       res.cookie("token", token, {
         httpOnly: true,
+        secure: true,
+ 	sameSite: "None",
       });
 
       return res.status(201).json({
         message: "Account created successfully",
         user: { id: userId, name, email, role: "user" },
       });
+      window.location.href = "/dashboard.html";
     });
   } catch (err) {
     console.error("Signup error:", err);
@@ -101,7 +104,7 @@ async function login(req, res) {
           httpOnly: true,
           secure: true,
           //secure: false,
-          sameSite: "None",
+          sameSite: "None",      
           //sameSite: "lax",
         });
       }
