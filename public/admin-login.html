@@ -59,7 +59,7 @@
       const form = document.getElementById("admin-login-form");
       const errorEl = document.getElementById("alert-error");
       const submitBtn = document.getElementById("submit-btn");
-      const BASE_URL = "https://nodevault-backend-k0jb.onrender.com/";
+      const BASE_URL = "https://nodevault-backend-k0jb.onrender.com";
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -90,7 +90,7 @@
 
           //check role
           if (data.user.role !== "admin") {
-            await fetch(`{BASE_URL}/api/logout`, {
+            await fetch(`${BASE_URL}/api/logout`, {
               method: "POST",
               credentials: "include",
             });
